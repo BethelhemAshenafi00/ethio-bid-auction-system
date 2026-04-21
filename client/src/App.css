@@ -1,0 +1,16 @@
+/* Simplified App.css - Aligned with ocean theme in styles.css */
+
+/* Remove complex Pinterest styles, use styles.css globals */
+
+/* Minimal defaults only */
+.App {
+  min-height: 100vh;
+}
+
+/* Responsive utilities if needed */
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+}
+
