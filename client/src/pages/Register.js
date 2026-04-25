@@ -104,7 +104,7 @@ function Register() {
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-xl border dark:border-gray-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="admin">Admin</option>
+            
             <option value="bidder">Bidder</option>
             <option value="seller">Seller</option>
           </select>
