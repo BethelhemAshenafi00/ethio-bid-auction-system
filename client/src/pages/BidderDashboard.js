@@ -17,7 +17,7 @@ import {
   FiTrash2
 } from "react-icons/fi";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://ethio-bid-auction-system.onrender.com");
 
 function BidderDashboard() {
   const { user } = useAuth();

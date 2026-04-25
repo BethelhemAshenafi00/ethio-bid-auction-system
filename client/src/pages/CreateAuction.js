@@ -46,7 +46,7 @@ const handleFileChange = (e) => {
         endTime: editAuction.endTime ? new Date(editAuction.endTime).toISOString().slice(0, 16) : ""
       });
       setCurrentImage(editAuction.image);
-      setPreview(`http://localhost:5000${editAuction.image}`);
+      setPreview(`http://ethio-bid-auction-system.onrender.com${editAuction.image}`);
     }
   }, [editAuction]);
 
@@ -146,7 +146,7 @@ const handleSubmit = async (e) => {
           <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow">
             <p className="text-sm text-gray-600 mb-2">Current image:</p>
             <img
-              src={`http://localhost:5000${currentImage}`}
+              src={`http://ethio-bid-auction-system.onrender.com${currentImage}`}
               alt="current"
               className="w-full max-w-md h-64 object-cover rounded-lg"
             />

@@ -100,7 +100,7 @@ function AuctionCard({
         <img
           src={
             safeAuction.image
-              ? `http://localhost:5000${safeAuction.image}`
+              ? `http://ethio-bid-auction-system.onrender.com${safeAuction.image}`
               : "/placeholder.jpg"
           }
           alt={safeAuction.title}

@@ -7,7 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import AuctionCard from "../components/AuctionCard";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://ethio-bid-auction-system.onrender.com");
 
 function AuctionList() {
   const [searchTerm, setSearchTerm] = useState("");
