@@ -16,7 +16,7 @@ const FRONTEND_URL = "https://ethio-bid-auction-system.vercel.app";
 
 // ===================== ALLOWED ORIGINS =====================
 const allowedOrigins = [
-  "http://localhost:3000",
+  "https://ethio-bid-auction-system.onrender.com",
   FRONTEND_URL
 ];
 
