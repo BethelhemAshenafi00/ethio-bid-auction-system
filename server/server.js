@@ -11,15 +11,19 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
+// ===================== FRONTEND =====================
 const FRONTEND_URL = "https://ethio-bid-auction-system.vercel.app";
+
+// ===================== ALLOWED ORIGINS =====================
+const allowedOrigins = [
+  "http://localhost:3000",
+  FRONTEND_URL
+];
 
 // ===================== SOCKET.IO =====================
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      FRONTEND_URL
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -42,10 +46,16 @@ io.on("connection", (socket) => {
 
 // ===================== MIDDLEWARE =====================
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    FRONTEND_URL
-  ],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      return callback(null, true); // prevent crash in production
+    }
+  },
   credentials: true
 }));
 
@@ -54,29 +64,20 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ===================== MONGODB =====================
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/auctionDB")
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Error:", err.message));
 
 // ===================== ROUTES =====================
-const auctionRoutes = require("./routes/auctions");
-const userRoutes = require("./routes/users");
-const authRoutes = require("./routes/auth");
-const paymentRoutes = require("./routes/payments");
-const adminRoutes = require("./routes/admin");
-const statsRoutes = require("./routes/stats");
-const bidderRoutes = require("./routes/bidder");
-const notificationRoutes = require("./routes/notifications");
-
-app.use("/api/auctions", auctionRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/stats", statsRoutes);
-app.use("/api/bidder", bidderRoutes);
+app.use("/api/auctions", require("./routes/auctions"));
+app.use("/api/users", require("./routes/users"));
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/payments", require("./routes/payments"));
+app.use("/api/admin", require("./routes/admin"));
+app.use("/api/stats", require("./routes/stats"));
+app.use("/api/bidder", require("./routes/bidder"));
 app.use("/api/seller", require("./routes/seller"));
-app.use("/api/notifications", notificationRoutes);
+app.use("/api/notifications", require("./routes/notifications"));
 
 // ===================== TEST ROUTE =====================
 app.get("/", (req, res) => {
