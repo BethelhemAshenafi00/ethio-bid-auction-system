@@ -16,7 +16,7 @@ import {
 } from "react-icons/fi";
 
 // Set your backend URL for images if they are stored locally
-const API_BASE_URL = "http://ethio-bid-auction-system.onrender.com"; 
+const API_BASE_URL = "https://ethio-bid-auction-system.onrender.com"; 
 
 
 function SellerDashboard() {

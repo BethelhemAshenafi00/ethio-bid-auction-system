@@ -26,7 +26,7 @@ function AuctionDetails() {
 
   useEffect(() => {
     fetchAuction();
-    socketRef.current = io("http://ethio-bid-auction-system.onrender.com");
+    socketRef.current = io("https://ethio-bid-auction-system.onrender.com");
 
     //bid updates
     socketRef.current.on("bidUpdate", (updatedAuction) => {
@@ -154,7 +154,7 @@ function AuctionDetails() {
           <div className="rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
             {auction.image ? (
               <img
-                src={`http://ethio-bid-auction-system.onrender.com${auction.image}`}
+                src={`https://ethio-bid-auction-system.onrender.com${auction.image}`}
                 alt={auction.title}
                 className="w-full h-64 sm:h-80 lg:h-[550px] object-cover"
               />
