@@ -3,13 +3,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
-const https = require("https");
+const http = require("http");
+const fs = require("fs");
 const { Server } = require("socket.io");
 
 const app = express();
-const server = https.createServer(app);
+const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
+
+// ===================== ENSURE UPLOADS DIRECTORY EXISTS =====================
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("✅ Created uploads directory");
+}
 
 // ===================== FRONTEND =====================
 const FRONTEND_URL = "https://ethio-bid-auction-system.vercel.app";

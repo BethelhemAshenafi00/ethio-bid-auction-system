@@ -75,10 +75,14 @@ const handleSubmit = async (e) => {
 
       let response;
       if (isEditMode) {
-        response = await axios.put(`/auctions/${editAuction._id}`, formData);
+        response = await axios.put(`/auctions/${editAuction._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
         alert("Auction updated successfully!");
       } else {
-        response = await axios.post("/auctions/create", formData);
+        response = await axios.post("/auctions/create", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
         alert("Auction created successfully!");
         navigate("/seller-dashboard");
         return;

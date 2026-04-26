@@ -1,6 +1,8 @@
 const express = require("express");
 const Joi = require("joi");
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 const router = express.Router();
 
 const Payment = require("../models/Payment");
@@ -10,8 +12,13 @@ const { verifyToken } = require("../middleware/auth");
 /* =======================
    MULTER FOR SLIP UPLOAD
 ======================= */
+const uploadsPath = path.join(__dirname, "..", "uploads");
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
+  destination: (req, file, cb) => cb(null, uploadsPath),
   filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
 });
 

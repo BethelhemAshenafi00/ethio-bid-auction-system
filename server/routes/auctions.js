@@ -3,6 +3,8 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Auction = require("../models/Auction");
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 const Joi = require("joi");
 const { verifyToken } = require("../middleware/auth");
 
@@ -113,8 +115,13 @@ setInterval(updateAuctionStatuses, 60000);
 /* =======================
    MULTER CONFIG
 ======================= */
+const uploadsPath = path.join(__dirname, "..", "uploads");
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
+  destination: (req, file, cb) => cb(null, uploadsPath),
   filename: (req, file, cb) =>
     cb(null, `${Date.now()}-${file.originalname}`)
 });
@@ -174,7 +181,8 @@ router.post("/create", verifyToken, upload.single("image"), async (req, res) => 
     });
 
   } catch (err) {
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("CREATE AUCTION ERROR:", err);
+    res.status(500).json({ success: false, message: err.message || "Server error" });
   }
 });
 
