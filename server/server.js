@@ -3,11 +3,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
-const http = require("http");
+const https = require("https");
 const { Server } = require("socket.io");
 
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
