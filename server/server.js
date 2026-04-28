@@ -28,6 +28,13 @@ const allowedOrigins = [
   FRONTEND_URL
 ];
 
+const fs = require('fs');
+
+const uploadDir = './uploads';
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir);
+}
+
 // ===================== SOCKET.IO =====================
 const io = new Server(server, {
   cors: {
