@@ -115,15 +115,20 @@ setInterval(updateAuctionStatuses, 60000);
 /* =======================
    MULTER CONFIG
 ======================= */
-const uploadsPath = path.join(__dirname, "..", "uploads");
+const uploadsPath = path.resolve(__dirname, "..", "uploads");
+
 if (!fs.existsSync(uploadsPath)) {
   fs.mkdirSync(uploadsPath, { recursive: true });
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsPath),
-  filename: (req, file, cb) =>
-    cb(null, `${Date.now()}-${file.originalname}`)
+  destination: (req, file, cb) => {
+    console.log("📁 Upload path:", uploadsPath); // debug
+    cb(null, uploadsPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
 
 const upload = multer({

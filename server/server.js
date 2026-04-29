@@ -13,7 +13,7 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
 // ===================== ENSURE UPLOADS DIRECTORY EXISTS =====================
-const uploadsDir = path.join(__dirname, "uploads");
+const uploadsDir = path.resolve(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
   console.log("✅ Created uploads directory");
@@ -75,7 +75,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
 // ===================== MONGODB =====================
 mongoose
