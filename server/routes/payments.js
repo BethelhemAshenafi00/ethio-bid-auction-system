@@ -1,31 +1,11 @@
 const express = require("express");
 const Joi = require("joi");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
 const router = express.Router();
 
 const Payment = require("../models/Payment");
 const Auction = require("../models/Auction");
 const { verifyToken } = require("../middleware/auth");
-
-/* =======================
-   MULTER FOR SLIP UPLOAD
-======================= */
-const uploadsPath = path.join(__dirname, "..", "uploads");
-if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsPath),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }
-});
+const { uploadSlip } = require("../middleware/upload");
 
 /* =======================
    GET MY PAYMENTS
@@ -433,9 +413,9 @@ router.post("/:auctionId/charge", verifyToken, async (req, res) => {
 });
 
 /* =======================
-   UPLOAD PAYMENT SLIP
+   UPLOAD PAYMENT SLIP (Cloudinary)
 ======================= */
-router.post("/:auctionId/slip", verifyToken, upload.single("slip"), async (req, res) => {
+router.post("/:auctionId/slip", verifyToken, uploadSlip.single("slip"), async (req, res) => {
   try {
     const userId = req.user._id || req.user.id;
     
@@ -465,7 +445,8 @@ router.post("/:auctionId/slip", verifyToken, upload.single("slip"), async (req, 
       console.log("✅ AUTH PASSED - slip upload authorized");
     }
 
-    const slipPath = req.file ? `/uploads/${req.file.filename}` : null;
+    // Cloudinary URL
+    const slipPath = req.file ? req.file.path : null;
 
     let payment = await Payment.findOne({
       auction: req.params.auctionId,

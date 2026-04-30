@@ -2,9 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const Auction = require("../models/Auction");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+const { uploadImage } = require("../middleware/upload");
 const Joi = require("joi");
 const { verifyToken } = require("../middleware/auth");
 
@@ -113,33 +111,9 @@ const updateAuctionStatuses = async () => {
 setInterval(updateAuctionStatuses, 60000);
 
 /* =======================
-   MULTER CONFIG
+   CREATE AUCTION (Cloudinary)
 ======================= */
-const uploadsPath = path.resolve(__dirname, "..", "uploads");
-
-if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    console.log("📁 Upload path:", uploadsPath); // debug
-    cb(null, uploadsPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }
-});
-
-/* =======================
-   CREATE AUCTION
-======================= */
-router.post("/create", verifyToken, upload.single("image"), async (req, res) => {
+router.post("/create", verifyToken, uploadImage.single("image"), async (req, res) => {
   try {
     if (req.user.role !== "seller") {
       return res.status(403).json({
@@ -166,11 +140,11 @@ router.post("/create", verifyToken, upload.single("image"), async (req, res) => 
 
     const { title, description, startingPrice, endTime, category } = req.body;
 
-    const auction = new Auction({
+const auction = new Auction({
       title,
       description,
       category,
-      image: req.file ? `/uploads/${req.file.filename}` : null,
+      image: req.file ? req.file.path : null, // Cloudinary returns the URL in req.file.path
       startingPrice: Number(startingPrice),
       currentPrice: Number(startingPrice),
       endTime: new Date(endTime),
@@ -347,7 +321,7 @@ router.get("/:id", async (req, res) => {
 /* =======================
    UPDATE AUCTION
 ======================= */
-router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
+router.put("/:id", verifyToken, uploadImage.single("image"), async (req, res) => {
   try {
     const auction = await Auction.findById(req.params.id);
 
@@ -377,7 +351,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
     Object.assign(auction, req.body);
 
     if (req.file) {
-      auction.image = `/uploads/${req.file.filename}`;
+      auction.image = req.file.path; // Cloudinary URL
     }
 
     await auction.save();

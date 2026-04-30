@@ -12,11 +12,18 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 5000;
 
-// ===================== ENSURE UPLOADS DIRECTORY EXISTS =====================
+// ===================== CLOUDINARY CONFIG =====================
+// Check if Cloudinary is configured
+if (process.env.CLOUDINARY_CLOUD_NAME) {
+  console.log("☁️ Cloudinary configured - using cloud storage");
+}
+
+// ===================== BACKWARD COMPAT: KEEP UPLOADS FOR LEGACY IMAGES =====================
+// Keep local uploads folder for backward compatibility with old images
 const uploadsDir = path.resolve(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log("✅ Created uploads directory");
+  console.log("✅ Created uploads directory (legacy support)");
 }
 
 // ===================== FRONTEND =====================
@@ -27,13 +34,6 @@ const allowedOrigins = [
   "https://ethio-bid-auction-system.onrender.com",
   FRONTEND_URL
 ];
-
-const fs = require('fs');
-
-const uploadDir = './uploads';
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir);
-}
 
 // ===================== SOCKET.IO =====================
 const io = new Server(server, {

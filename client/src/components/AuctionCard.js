@@ -95,12 +95,12 @@ function AuctionCard({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-lg hover:shadow-xl transition p-6">
 
-      {/* IMAGE */}
+{/* IMAGE */}
       <div className="h-56 rounded-xl overflow-hidden mb-4">
         <img
           src={
             safeAuction.image
-              ? `https://ethio-bid-auction-system.onrender.com${safeAuction.image}`
+              ? safeAuction.image
               : "/placeholder.jpg"
           }
           alt={safeAuction.title}

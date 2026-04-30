@@ -150,11 +150,11 @@ function AuctionDetails() {
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10">
 
-          {/* IMAGE */}
+{/* IMAGE */}
           <div className="rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
             {auction.image ? (
               <img
-                src={`https://ethio-bid-auction-system.onrender.com${auction.image}`}
+                src={auction.image}
                 alt={auction.title}
                 className="w-full h-64 sm:h-80 lg:h-[550px] object-cover"
               />

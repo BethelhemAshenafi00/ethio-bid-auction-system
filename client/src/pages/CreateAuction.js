@@ -35,7 +35,7 @@ const handleFileChange = (e) => {
     }
   };
 
-  // Prefill form for edit mode
+// Prefill form for edit mode
   useEffect(() => {
     if (editAuction) {
       setForm({
@@ -46,7 +46,8 @@ const handleFileChange = (e) => {
         endTime: editAuction.endTime ? new Date(editAuction.endTime).toISOString().slice(0, 16) : ""
       });
       setCurrentImage(editAuction.image);
-      setPreview(`https://ethio-bid-auction-system.onrender.com${editAuction.image}`);
+      // Cloudinary URLs are now full URLs, no need to prepend domain
+      setPreview(editAuction.image);
     }
   }, [editAuction]);
 
@@ -145,12 +146,12 @@ const handleSubmit = async (e) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Current image preview in edit mode */}
+{/* Current image preview in edit mode */}
         {currentImage && !image && (
           <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow">
             <p className="text-sm text-gray-600 mb-2">Current image:</p>
             <img
-              src={`https://ethio-bid-auction-system.onrender.com${currentImage}`}
+              src={currentImage}
               alt="current"
               className="w-full max-w-md h-64 object-cover rounded-lg"
             />

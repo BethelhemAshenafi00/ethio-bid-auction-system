@@ -1,23 +1,40 @@
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
 
-const uploadsPath = path.join(__dirname, "..", "uploads");
-if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath, { recursive: true });
-}
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "det0zwlkc",
+  api_key: process.env.CLOUDINARY_API_KEY || "321828957565793",
+  api_secret: process.env.CLOUDINARY_API_SECRET || "SRDXLASG7ybNCpPTsbuXqd-m-1A"
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsPath);
-  },
-
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+// Create Cloudinary storage engine for images
+const imageStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "auction-images",
+    allowed_formats: ["jpg", "jpeg", "png", "gif", "webp"],
+    transformation: [{ quality: "auto", fetch_format: "auto" }]
   }
 });
 
-const upload = multer({ storage });
+// Create Cloudinary storage engine for payment slips
+const slipStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "payment-slips",
+    allowed_formats: ["jpg", "jpeg", "png", "gif", "webp", "pdf"],
+    transformation: [{ quality: "auto", fetch_format: "auto" }]
+  }
+});
 
-module.exports = upload;
+// Export multer upload instances
+const uploadImage = multer({ storage: imageStorage });
+const uploadSlip = multer({ storage: slipStorage });
 
+module.exports = {
+  uploadImage,
+  uploadSlip,
+  cloudinary
+};
