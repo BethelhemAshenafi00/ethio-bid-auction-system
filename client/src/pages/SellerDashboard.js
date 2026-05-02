@@ -93,9 +93,9 @@ const [endedAuctions, setEndedAuctions] = useState([]);
   }
 }, []);
 
-  const fetchPayments = useCallback(async () => {
+const fetchPayments = useCallback(async () => {
     try {
-      const res = await axios.get("/seller/payments");
+      const res = await axios.get("/payments/seller");
       setPayments(res.data.data || []);
     } catch (err) {
       console.error("Payments error:", err);
@@ -126,13 +126,13 @@ const [endedAuctions, setEndedAuctions] = useState([]);
     }
   };
 
-  // Approve Payment Handler
+// Approve Payment Handler
   const handleApprovePayment = async (paymentId) => {
     if (!window.confirm("Approve this payment? Bidder will receive the item.")) return;
 
     setActionLoading(paymentId);
     try {
-      await axios.patch(`/seller/payments/${paymentId}/approve`);
+      await axios.patch(`/payments/seller/${paymentId}/approve`);
       await fetchPayments();
       setSelectedPayment(null);
       alert("✅ Payment approved!");
@@ -157,12 +157,12 @@ const [endedAuctions, setEndedAuctions] = useState([]);
     }
   };
 
-  const handleRejectPayment = async (paymentId) => {
+const handleRejectPayment = async (paymentId) => {
     if (!window.confirm("Reject this payment? Bidder can re-upload new slip.")) return;
 
     setActionLoading(paymentId);
     try {
-      await axios.patch(`/seller/payments/${paymentId}/reject`);
+      await axios.patch(`/payments/seller/${paymentId}/reject`);
       await fetchPayments();
       setSelectedPayment(null);
       alert("❌ Payment rejected. Bidder notified.");

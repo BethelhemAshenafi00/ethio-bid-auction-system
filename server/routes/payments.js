@@ -512,7 +512,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
 });
 
 /* REJECT PAYMENT (Admin) */
-router.patch("/:id/reject", verifyToken, async (req, res) => {
+router.patch("/admin/:id/reject", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
       return res.status(403).json({ success: false, message: "Admin only" });
