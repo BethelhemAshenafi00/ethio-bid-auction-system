@@ -3,6 +3,29 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 
+// Helper function to normalize and validate image URLs
+const getImageUrl = (url) => {
+  if (!url) return "/placeholder.jpg";
+  
+  // If it's already a valid absolute URL (https://...), use it directly
+  if (url.startsWith("https://") || url.startsWith("http://")) {
+    return url;
+  }
+  
+  // If it's a relative path starting with /uploads, use API base URL
+  if (url.startsWith("/uploads")) {
+    return `https://ethio-bid-auction-system.onrender.com${url}`;
+  }
+  
+  // If it's a Cloudinary path without protocol (corrupted), fix it
+  if (url.includes("cloudinary.com") && !url.startsWith("http")) {
+    return `https://${url}`;
+  }
+  
+  // Otherwise, assume it's a relative path
+  return `https://ethio-bid-auction-system.onrender.com/uploads/${url}`;
+};
+
 function AuctionCard({
   auction,
   onBid,
@@ -98,13 +121,10 @@ function AuctionCard({
 {/* IMAGE */}
       <div className="h-56 rounded-xl overflow-hidden mb-4">
         <img
-          src={
-            safeAuction.image
-              ? safeAuction.image
-              : "/placeholder.jpg"
-          }
+          src={getImageUrl(safeAuction.image)}
           alt={safeAuction.title}
           className="w-full h-full object-cover hover:scale-105 transition duration-300"
+          onError={(e) => { e.target.src = "/placeholder.jpg"; }}
         />
       </div>
 

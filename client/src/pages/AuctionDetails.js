@@ -4,6 +4,29 @@ import { io } from "socket.io-client";
 import { useAuth } from "../contexts/AuthContext";
 import { useParams, Link } from "react-router-dom";
 
+// Helper function to normalize and validate image URLs
+const getImageUrl = (url) => {
+  if (!url) return null;
+  
+  // If it's already a valid absolute URL (https://...), use it directly
+  if (url.startsWith("https://") || url.startsWith("http://")) {
+    return url;
+  }
+  
+  // If it's a relative path starting with /uploads, use API base URL
+  if (url.startsWith("/uploads")) {
+    return `https://ethio-bid-auction-system.onrender.com${url}`;
+  }
+  
+  // If it's a Cloudinary path without protocol (corrupted), fix it
+  if (url.includes("cloudinary.com") && !url.startsWith("http")) {
+    return `https://${url}`;
+  }
+  
+  // Otherwise, assume it's a relative path
+  return `https://ethio-bid-auction-system.onrender.com/uploads/${url}`;
+};
+
 function AuctionDetails() {
   const { id } = useParams();
   const [auction, setAuction] = useState(null);
@@ -154,9 +177,10 @@ function AuctionDetails() {
           <div className="rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
             {auction.image ? (
               <img
-                src={auction.image}
+                src={getImageUrl(auction.image)}
                 alt={auction.title}
                 className="w-full h-64 sm:h-80 lg:h-[550px] object-cover"
+                onError={(e) => { e.target.src = "/placeholder.jpg"; }}
               />
             ) : (
               <div className="w-full h-64 sm:h-80 lg:h-[550px] bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500 text-xl">

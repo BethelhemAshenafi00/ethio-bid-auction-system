@@ -16,7 +16,30 @@ import {
 } from "react-icons/fi";
 
 // Set your backend URL for images if they are stored locally
-const API_BASE_URL = "https://ethio-bid-auction-system.onrender.com"; 
+const API_BASE_URL = "https://ethio-bid-auction-system.onrender.com";
+
+// Helper function to normalize and validate image URLs
+const getSlipImageUrl = (url) => {
+  if (!url) return null;
+  
+  // If it's already a valid absolute URL (https://...), use it directly
+  if (url.startsWith("https://") || url.startsWith("http://")) {
+    return url;
+  }
+  
+  // If it's a relative path starting with /uploads, use API base URL
+  if (url.startsWith("/uploads")) {
+    return `https://ethio-bid-auction-system.onrender.com${url}`;
+  }
+  
+  // If it's a Cloudinary path without protocol (corrupted), fix it
+  if (url.includes("cloudinary.com") && !url.startsWith("http")) {
+    return `https://${url}`;
+  }
+  
+  // Otherwise, assume it's a relative path
+  return `https://ethio-bid-auction-system.onrender.com/uploads/${url}`;
+};
 
 
 function SellerDashboard() {
@@ -367,14 +390,14 @@ const [endedAuctions, setEndedAuctions] = useState([]);
                 </div>
               </div>
 
-              <div className="space-y-3">
+<div className="space-y-3">
                 <p className="text-xs text-gray-500 uppercase font-bold flex items-center">
                    <FiPlusCircle className="mr-2" /> Proof of Payment Slip
                 </p>
                 {selectedPayment.slip ? (
                   <div className="rounded-2xl overflow-hidden border-2 border-gray-100 dark:border-gray-800 bg-gray-50 group relative">
                     <img 
-                      src={selectedPayment.slip.startsWith('http') ? selectedPayment.slip : `${API_BASE_URL}${selectedPayment.slip}`} 
+                      src={getSlipImageUrl(selectedPayment.slip)} 
                       alt="Payment Slip" 
                       className="w-full h-auto min-h-[300px] object-contain"
                       onError={(e) => { e.target.src = "https://via.placeholder.com/600x400?text=Receipt+Not+Found"; }}

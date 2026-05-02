@@ -344,6 +344,83 @@ router.post("/auction/:auctionId/request-payment", verifyToken, async (req, res)
 });
 
 /* =======================
+   SELLER: REJECT PAYMENT
+======================= */
+router.patch("/payments/:id/reject", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== "seller") {
+      return res.status(403).json({
+        success: false,
+        message: "Seller only"
+      });
+    }
+
+    const userId = req.user._id || req.user.id;
+
+    const payment = await Payment.findById(req.params.id).populate("auction");
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment not found"
+      });
+    }
+
+    if (payment.status !== "proof_uploaded" && payment.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Can only reject pending/proof_uploaded payments"
+      });
+    }
+
+    if (!payment.auction || payment.auction.seller.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not your auction"
+      });
+    }
+
+    payment.status = "rejected";
+    await payment.save();
+
+    // Send notification to bidder
+    const Notification = require("../models/Notification");
+    if (payment.bidder) {
+      const bidderNotif = new Notification({
+        user: payment.bidder,
+        type: "PAYMENT_REJECTED",
+        auction: payment.auction._id,
+        title: `❌ Payment Rejected for "${payment.auction.title}"`,
+        message: `Your payment slip for "${payment.auction.title}" was rejected by the seller. Please upload a new slip.`,
+        read: false
+      });
+      await bidderNotif.save();
+
+      // Socket notification
+      const io = req.app.get("io");
+      if (io) {
+        io.to(payment.bidder.toString()).emit("paymentRejected", {
+          message: `Payment rejected for "${payment.auction.title}". Please re-upload your slip.`,
+          auctionId: payment.auction._id.toString(),
+          paymentId: payment._id.toString()
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: "Payment rejected. Bidder can re-upload slip."
+    });
+  } catch (err) {
+    console.error("REJECT PAYMENT ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+});
+
+/* =======================
    SELLER: DELETE PAYMENT
 ======================= */
 router.delete("/payments/:id", verifyToken, async (req, res) => {
