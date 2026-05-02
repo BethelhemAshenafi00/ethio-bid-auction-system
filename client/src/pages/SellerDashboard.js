@@ -95,7 +95,7 @@ const [endedAuctions, setEndedAuctions] = useState([]);
 
 const fetchPayments = useCallback(async () => {
     try {
-      const res = await axios.get("/payments/seller");
+      const res = await axios.get("/seller/payments");
       setPayments(res.data.data || []);
     } catch (err) {
       console.error("Payments error:", err);
@@ -132,7 +132,7 @@ const fetchPayments = useCallback(async () => {
 
     setActionLoading(paymentId);
     try {
-      await axios.patch(`/payments/seller/${paymentId}/approve`);
+      await axios.patch(`/seller/payments/${paymentId}/approve`);
       await fetchPayments();
       setSelectedPayment(null);
       alert("✅ Payment approved!");
@@ -162,7 +162,7 @@ const handleRejectPayment = async (paymentId) => {
 
     setActionLoading(paymentId);
     try {
-      await axios.patch(`/payments/seller/${paymentId}/reject`);
+      await axios.patch(`/seller/payments/${paymentId}/reject`);
       await fetchPayments();
       setSelectedPayment(null);
       alert("❌ Payment rejected. Bidder notified.");
