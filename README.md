@@ -50,7 +50,7 @@ A full-stack web application that allows users to create auctions, place bids, a
 ### Frontend
 
 * React.js
-* CSS / Tailwind (if used)
+* Tailwind
 * Axios
 
 ### Backend
